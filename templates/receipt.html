@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Shri Mandir Abhishek Receipt</title>
+  <style>
+    body {
+      font-family: 'Devanagari Sangam MN', sans-serif;
+      background-color: #fff8e1;
+      margin: 40px;
+      color: #4e342e;
+    }
+    .receipt-box {
+      border: 3px double #ff6f00;
+      padding: 20px 40px;
+      max-width: 700px;
+      margin: auto;
+      background-color: #fff3e0;
+      border-radius: 12px;
+    }
+    h1, h2 {
+      text-align: center;
+      color: #d84315;
+      margin-bottom: 0;
+    }
+    .mandir-name {
+      font-size: 1.1em;
+      color: #6d4c41;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .details {
+      margin-top: 20px;
+      font-size: 1.1em;
+    }
+    .details p {
+      line-height: 1.6;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 30px;
+      font-style: italic;
+      color: #8d6e63;
+    }
+    .print-btn {
+      display: block;
+      text-align: center;
+      margin-top: 30px;
+    }
+    .print-btn button {
+      background-color: #ff6f00;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 1em;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .print-btn button:hover {
+      background-color: #f57c00;
+    }
+  </style>
+</head>
+<body>
+  <div class="receipt-box">
+    <h1>🕉 Shri Mandir Abhishek Receipt</h1>
+    <div class="mandir-name">Shree Swami Samarth Samadhi Math, Akkalkot</div>
+
+    <div class="details">
+      <p><strong>🙏 Bhakt Name:</strong> {{ bhakt_name }}</p>
+      <p><strong>🗓️ Abhishek Type:</strong> {{ abhishek_type }}</p>
+      <p><strong>📅 Abhishek Date:</strong> {{ abhishek_date }}</p>
+      <p><strong>🪔 Status:</strong> Completed Successfully</p>
+    </div>
+
+    <div class="footer">
+      May Lord Swami Samarth bless you and your family with peace and prosperity.<br>
+      🔔 Thank you for your devotion.
+    </div>
+
+    <div class="print-btn">
+      <button onclick="window.print()">🖨️ Print Receipt</button>
+    </div>
+  </div>
+</body>
+</html>

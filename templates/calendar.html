@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Monthly Abhishek Schedule</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <div class="container">
+    <h2>🗓️ Monthly Abhishek Schedule</h2>
+
+    {% if schedule %}
+      {% for bhakt, data in schedule.items() %}
+        <div class="schedule-card">
+          <h3>{{ bhakt }}</h3>
+          <p><strong>Type:</strong> {{ data.abhishek_type }}</p>
+          <p><strong>Duration:</strong> {{ data.duration }} months</p>
+          <p><strong>Upcoming Abhishek Dates:</strong></p>
+          <ul>
+            {% for date in data.dates %}
+  <li>
+    {{ date }}
+    <form method="POST" action="{{ url_for('mark_completed') }}" style="display:inline;">
+      <input type="hidden" name="bhakt_id" value="{{ data.id }}">
+      <input type="hidden" name="abhishek_type" value="{{ data.abhishek_type }}">
+      <input type="hidden" name="date" value="{{ date }}">
+      <button type="submit">✅ Mark as Completed</button>
+    </form>
+  </li>
+{% endfor %}
+
+          </ul>
+
+          {% if data.dates %}
+  <p>
+    <a href="{{ url_for('generate_receipt', bhakt_id=data['id'], abhishek_type=data['abhishek_type']) }}" target="_blank">
+      🧾 Download Receipt for {{ data.dates[0] }}
+    </a>
+  </p>
+{% endif %}
+
+        </div>
+      {% endfor %}
+    {% else %}
+      <p>No bhakts or scheduled dates yet.</p>
+    {% endif %}
+        
+    <p><a href="{{ url_for('dashboard') }}">← Back to Dashboard</a></p>
+  </div>
+</body>
+</html>

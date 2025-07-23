@@ -1,0 +1,82 @@
+body {
+  font-family: "Segoe UI", sans-serif;
+  background-color: #fff8e1;
+  margin: 0;
+  padding: 20px;
+  color: #3e2723;
+}
+
+.container {
+  max-width: 800px;
+  margin: auto;
+  background-color: #fffaf0;
+  border: 1px solid #ffd54f;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 0 12px rgba(0,0,0,0.05);
+}
+
+h2, h3 {
+  color: #e65100;
+}
+
+label {
+  display: block;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+input, select, button {
+  display: block;
+  width: 100%;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+button {
+  background-color: #ff6f00;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #e65100;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+th {
+  background-color: #ffe082;
+  color: #3e2723;
+}
+
+th, td {
+  padding: 10px;
+  text-align: left;
+  border: 1px solid #ffd54f;
+}
+
+a {
+  text-decoration: none;
+  color: #d84315;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.schedule-card {
+  margin-bottom: 20px;
+  padding: 10px;
+  background-color: #fffde7;
+  border: 1px solid #ffe082;
+  border-radius: 8px;
+}

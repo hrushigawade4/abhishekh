@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Bhakt Details</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <div class="container">
+    <h2>📄 Bhakt Details</h2>
+
+    <p><strong>Name:</strong> {{ bhakt[1] }}</p>
+    <p><strong>Gotra:</strong> {{ bhakt[2] }}</p>
+    <p><strong>Abhishek Type:</strong> {{ bhakt[3] }}</p>
+    <p><strong>Duration:</strong> {{ bhakt[4] }} months</p>
+    <p><strong>Start Date:</strong> {{ bhakt[5] }}</p>
+    <p><strong>End Date:</strong> {{ bhakt[6] }}</p>
+
+    <h3>🗓️ Abhishek Schedule</h3>
+    {% if schedule %}
+      <ul>
+        {% for date in schedule %}
+          <li>{{ date }}</li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>No abhishek dates found for this bhakt.</p>
+    {% endif %}
+
+    
+     
+    <p><a href="{{ url_for('dashboard') }}">← Back to Dashboard</a></p>
+  </div>
+</body>
+</html>

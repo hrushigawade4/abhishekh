@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Search Bhakt | Abhishek Manager</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <div class="container">
+    <h2>🔍 Search Results for "{{ q }}"</h2>
+
+    {% if results %}
+      <table border="1" cellpadding="6" cellspacing="0">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Gotra</th>
+            <th>Abhishek Type</th>
+            <th>Start</th>
+            <th>End</th>
+            <th>Details</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for b in results %}
+          <tr>
+            <td>{{ b[0] }}</td>
+            <td>{{ b[1] }}</td>
+            <td>{{ b[2] }}</td>
+            <td>{{ b[3] }}</td>
+            <td>{{ b[5] }}</td>
+            <td>{{ b[6] }}</td>
+            <td><a href="{{ url_for('bhakt_detail', bhakt_id=b[0]) }}">📄 View</a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p>No results found.</p>
+    {% endif %}
+
+    <p><a href="{{ url_for('dashboard') }}">← Back to Dashboard</a></p>
+  </div>
+</body>
+</html>

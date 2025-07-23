@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Register Bhakt | Abhishek Manager</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <div class="container">
+    <h2>📝 Bhakt Registration</h2>
+    <form method="POST" action="{{ url_for('register') }}">
+      <div>
+        <label for="name">Full Name:</label>
+        <input type="text" name="name" required>
+      </div>
+
+      <div>
+        <label for="gotra">Gotra:</label>
+        <input type="text" name="gotra" required>
+      </div>
+
+      <div>
+        <label for="abhishek_type">Abhishek Type:</label>
+        <select name="abhishek_type" required>
+          <option value="Purnima">Purnima</option>
+          <option value="Guruwar">Guruwar</option>
+          <option value="Pradosh">Pradosh</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="duration">Duration:</label>
+        <select name="duration" required>
+          <option value="6">6 Months</option>
+          <option value="12">12 Months</option>
+          <option value="24">2 Years</option>
+          <option value="60">5 Years</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="start_date">Start Date:</label>
+        <input type="date" name="start_date" required>
+      </div>
+
+      <button type="submit">Register Bhakt</button>
+    </form>
+
+    <p><a href="{{ url_for('dashboard') }}">← Back to Dashboard</a></p>
+  </div>
+</body>
+</html>
