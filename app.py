@@ -44,8 +44,18 @@ def init_db():
             end_date TEXT
         )
     """)
+    # ✅ NEW TABLE
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS completed_abhisheks (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            bhakt_id INTEGER,
+            abhishek_type TEXT,
+            completed_date TEXT
+        )
+    """)
     conn.commit()
     conn.close()
+
 
 def seed_admin():
     conn = sqlite3.connect(DB_PATH)
@@ -167,9 +177,18 @@ def bhakt_detail(bhakt_id):
 def calendar():
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
+
+    # Get all bhakts
     c.execute("SELECT * FROM bhakts")
     rows = c.fetchall()
+
+    # Get all completed entries
+    c.execute("SELECT bhakt_id, abhishek_type, completed_date FROM completed_abhisheks")
+    completed_raw = c.fetchall()
     conn.close()
+
+    # Create a set of completed dates per bhakt and type
+    completed = set((row[0], row[1], row[2]) for row in completed_raw)
 
     result = {}
     for row in rows:
@@ -181,13 +200,15 @@ def calendar():
         dates = calculate_abhishek_dates(abhishek_type, start_date, duration)
         
         result[name] = {
-            "id": bhakt_id,  # ✅ Add this line
+            "id": bhakt_id,
             "abhishek_type": abhishek_type,
             "duration": duration,
-            "dates": dates
+            "dates": dates,
+            "completed": [d for d in dates if (bhakt_id, abhishek_type, d) in completed]
         }
 
     return render_template('calendar.html', schedule=result)
+
 
 
 @app.route('/export_csv')
