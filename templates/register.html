@@ -6,47 +6,59 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-  <div class="container">
-    <h2>📝 Bhakt Registration</h2>
-    <form method="POST" action="{{ url_for('register') }}">
-      <div>
+
+  <!-- 🔱 Header -->
+  <header class="main-header">
+    <h1>Shree Swami Samarth Seva Portal – अभिषेक सेवा प्रणाली</h1>
+  </header>
+
+  <!-- ✅ Centered Registration Box like Login -->
+  <div class="login-container">
+    <h2>📝 <span>Bhakt Registration</span></h2>
+
+    <form method="POST">
+      <div class="form-group">
         <label for="name">Full Name:</label>
-        <input type="text" name="name" required>
+        <input type="text" name="name" id="name" required>
       </div>
 
-      <div>
+      <div class="form-group">
         <label for="gotra">Gotra:</label>
-        <input type="text" name="gotra" required>
+        <input type="text" name="gotra" id="gotra" required>
       </div>
 
-      <div>
-        <label for="abhishek_type">Abhishek Type:</label>
-        <select name="abhishek_type" required>
+      <div class="form-group">
+        <label for="type">Abhishek Type:</label>
+        <select name="type" id="type" required>
+          <option value="">Select</option>
           <option value="Purnima">Purnima</option>
-          <option value="Guruwar">Guruwar</option>
-          <option value="Pradosh">Pradosh</option>
+          <option value="Amavasya">Amavasya</option>
         </select>
       </div>
 
-      <div>
+      <div class="form-group">
         <label for="duration">Duration:</label>
-        <select name="duration" required>
+        <select name="duration" id="duration" required>
+          <option value="">Select</option>
           <option value="6">6 Months</option>
           <option value="12">12 Months</option>
-          <option value="24">2 Years</option>
-          <option value="60">5 Years</option>
         </select>
       </div>
 
-      <div>
+      <div class="form-group">
         <label for="start_date">Start Date:</label>
-        <input type="date" name="start_date" required>
+        <input type="date" name="start_date" id="start_date" required>
       </div>
 
       <button type="submit">Register Bhakt</button>
     </form>
 
-    <p><a href="{{ url_for('dashboard') }}">← Back to Dashboard</a></p>
+    <a href="{{ url_for('dashboard') }}" class="back-link">← Back to Dashboard</a>
   </div>
+
+  <!-- 🕉 Footer -->
+  <footer class="main-footer">
+    <p><em>"सद्गुरु श्री स्वामी समर्थ महाराज की जय"</em></p>
+  </footer>
 </body>
 </html>

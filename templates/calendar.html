@@ -1,53 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
-  <title>Monthly Abhishek Schedule</title>
+  <title>Abhishek Calendar | Abhishek Manager</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
+
 <body>
+
+  <!-- 🔱 Header -->
+  <header class="main-header">
+    <h1>Shree Swami Samarth Seva Portal – अभिषेक सेवा प्रणाली</h1>
+  </header>
+
+  <!-- 📅 Calendar Section -->
   <div class="container">
-    <h2>🗓️ Monthly Abhishek Schedule</h2>
+    <h2>🗓️ Abhishek Calendar</h2>
+    <!-- 🔙 Back Button -->
+    <div style="margin-top: 2em; text-align: center;">
+      <a href="{{ url_for('dashboard') }}" class="back-link">← Back to Dashboard</a>
+    </div>
+    {% for group, bhakts in schedule.items() %}
+    <div class="calendar-section">
+      <h3>{{ group }}</h3>
 
-    {% if schedule %}
-      {% for bhakt, data in schedule.items() %}
-        <div class="schedule-card">
-          <h3>{{ bhakt }}</h3>
-          <p><strong>Type:</strong> {{ data.abhishek_type }}</p>
-          <p><strong>Duration:</strong> {{ data.duration }} months</p>
-          <p><strong>Upcoming Abhishek Dates:</strong></p>
-          <ul>
-            {% for date in data.dates %}
-              <li>
-                {{ date }}
-                {% if date in data.completed %}
-                  <span style="color: green; font-weight: bold;">✅ Completed</span>
-                {% else %}
-                  <form method="POST" action="{{ url_for('mark_completed') }}" style="display:inline;">
-                    <input type="hidden" name="bhakt_id" value="{{ data.id }}">
-                    <input type="hidden" name="abhishek_type" value="{{ data.abhishek_type }}">
-                    <input type="hidden" name="date" value="{{ date }}">
-                    <button type="submit">✅ Mark as Completed</button>
-                  </form>
-                {% endif %}
-              </li>
-            {% endfor %}
-          </ul>
+      {% for bhakt, data in bhakts.items() %}
+      <div class="schedule-card bhakt-entry">
+        <h4>{{ bhakt }}</h4>
+        <p><strong>Type:</strong> {{ data.abhishek_type }}</p>
+        <p><strong>Duration:</strong> {{ data.duration }} months</p>
 
-          {% if data.dates %}
-            <p>
-              <a href="{{ url_for('generate_receipt', bhakt_id=data.id, abhishek_type=data.abhishek_type) }}" target="_blank">
-                🧾 Download Receipt for {{ data.dates[0] }}
-              </a>
-            </p>
-          {% endif %}
-        </div>
+        <ul class="date-list">
+          {% for d in data.enriched_dates %}
+          <li>
+            <div class="calendar-card">
+              <span
+                class="calendar-date-label {% if d.delta == 0 %}date-today{% elif d.delta < 0 %}date-past{% elif d.delta <= 5 %}date-upcoming{% endif %}">
+                {{ d.date }}
+              </span>
+
+              {% if d.completed %}
+              <span class="completed-label">✔ Completed</span>
+              {% else %}
+              <form method="POST" action="{{ url_for('mark_completed') }}" class="calendar-form"
+                style="display:inline;">
+                <input type="hidden" name="bhakt_id" value="{{ data.id }}">
+                <input type="hidden" name="abhishek_type" value="{{ data.abhishek_type }}">
+                <input type="hidden" name="date" value="{{ d.date }}">
+                <button type="submit">✅ Mark as Completed</button>
+              </form>
+              {% endif %}
+            </div>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
       {% endfor %}
-    {% else %}
-      <p>No bhakts or scheduled dates yet.</p>
-    {% endif %}
-        
-    <p><a href="{{ url_for('dashboard') }}">← Back to Dashboard</a></p>
+    </div>
+    {% endfor %}
+    <!-- 🔙 Back Button -->
+    <div style="margin-top: 2em; text-align: center;">
+      <a href="{{ url_for('dashboard') }}" class="back-link">← Back to Dashboard</a>
+    </div>
+
   </div>
+
+  <!-- 🕉 Footer -->
+  <footer class="main-footer">
+    <p><em>"सद्गुरु श्री स्वामी समर्थ महाराज की जय"</em></p>
+  </footer>
+
 </body>
+
 </html>

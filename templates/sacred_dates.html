@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sacred Dates | Abhishek Manager</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+  <!-- 🔱 Header -->
+  <header class="main-header">
+    <h1>Shree Swami Samarth Seva Portal – अभिषेक सेवा प्रणाली</h1>
+  </header>
+
+  <!-- 🗓️ Sacred Dates Box -->
+  <div class="login-container">
+    <h2>📅 <span>Sacred Dates Manager</span></h2>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul class="flash-messages">
+          {% for message in messages %}
+            <li style="color: green;">{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST">
+      <div class="form-group">
+        <label for="abhishek_type">Select Abhishek Type:</label>
+        <select name="abhishek_type" id="abhishek_type">
+          {% for t in abhishek_types %}
+            <option value="{{ t }}">{{ t }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="new_abhishek_type">Or Add New Abhishek Type:</label>
+        <input type="text" name="new_abhishek_type" id="new_abhishek_type" placeholder="e.g. Amavasya">
+      </div>
+
+      <div class="form-group">
+        <label for="new_date">New Date:</label>
+        <input type="date" name="new_date" id="new_date" required>
+      </div>
+
+      <button type="submit">➕ Add Sacred Date</button>
+    </form>
+
+    <hr>
+
+    <h3>📖 Current Sacred Dates</h3>
+    {% for abhishek, dates in sacred_dates.items() %}
+      <div style="margin-bottom: 1em;">
+        <strong>{{ abhishek }}</strong>:
+        <ul>
+          {% for d in dates %}
+            <li>{{ d }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endfor %}
+
+    <a href="{{ url_for('dashboard') }}" class="back-link">← Back to Dashboard</a>
+  </div>
+
+  <!-- 🕉 Footer -->
+  <footer class="main-footer">
+    <p><em>"सद्गुरु श्री स्वामी समर्थ महाराज की जय"</em></p>
+  </footer>
+
+</body>
+</html>

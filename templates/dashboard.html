@@ -1,63 +1,56 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Dashboard | Abhishek Manager</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
-<body>
-  <div class="container">
-    <h2>📊 Dashboard</h2>
-    <p>Total Bhakts: <strong>{{ total }}</strong></p>
+{% extends "base.html" %}
 
-    <div style="margin-bottom: 1em;">
-      <a href="{{ url_for('register') }}">➕ Register Bhakt</a> |
-      <a href="{{ url_for('calendar') }}">📅 Monthly Calendar</a> |
-      <a href="{{ url_for('export_csv') }}">📤 Export to CSV</a> |
-      <a href="{{ url_for('logout') }}">🚪 Logout</a>
-    </div>
+{% block title %}Dashboard | Abhishek Manager{% endblock %}
 
-    <form method="GET" action="{{ url_for('search') }}">
-      <input type="text" name="q" placeholder="Search Bhakt by Name" required>
-      <button type="submit">🔍 Search</button>
-    </form>
+{% block content %}
+<div class="dashboard-container">
+  <h2>📊 Abhishek Dashboard – Guided by the Grace of Shree Swami Samarth</h2>
+  <p>Total Bhakts: <strong>{{ total }}</strong></p>
 
-    <div style="margin-top: 1em; font-size: 0.9em;">
-      <strong>Status Legend:</strong><br>
-      🟩 <span style="color: green;">Active</span> = more than 30 days left<br>
-      🟨 <span style="color: orange;">Expiring Soon</span> = under 30 days<br>
-      🟥 <span style="color: red;">Expired</span> = already ended
-    </div>
-
-    <table border="1" cellpadding="6" cellspacing="0" style="margin-top: 1em; width: 100%;">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Start Date</th>
-          <th>Next Abhishek Date</th>
-          <th>Status</th>
-          <th>View</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for b in summary %}
-        <tr style="background-color:
-          {% if b[5] == 'expired' %}#ffe6e6
-          {% elif b[5] == 'expiring_soon' %}#fff3cd
-          {% else %}#e6ffea{% endif %};">
-          <td>{{ b[0] }}</td>
-          <td>{{ b[1] }}</td>
-          <td>{{ b[2] }}</td>
-          <td>{{ b[3] }}</td>
-          <td>{{ b[4] }}</td>
-          <td><strong>{{ b[5]|replace('_', ' ')|upper }}</strong></td>
-          <td><a href="{{ url_for('bhakt_detail', bhakt_id=b[0]) }}">📄 Details</a></td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+  <div class="dashboard-links">
+    <a href="{{ url_for('register') }}">➕ Register Bhakt</a> |
+    <a href="{{ url_for('calendar') }}">📅 Monthly Calendar</a> |
+    <a href="{{ url_for('export_csv') }}">📤 Export to CSV</a> |
+    <a href="{{ url_for('sacred_dates') }}">🛠 Manage Sacred Dates</a> |
+    <a href="{{ url_for('logout') }}">🚪 Logout</a>
   </div>
-</body>
-</html>
+
+  <form method="GET" action="{{ url_for('search') }}" class="search-form">
+    <input type="text" name="q" placeholder="Search Bhakt by Name" required>
+    <button type="submit">🔍 Search</button>
+  </form>
+
+  <div class="status-legend">
+    <strong>Status Legend:</strong><br>
+    🟩 <span class="badge active">Active</span> = more than 30 days left<br>
+    🟥 <span class="badge expired">Expired</span> = already ended
+  </div>
+
+  <table class="bhakt-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Start Date</th>
+        <th>Next Abhishek Date</th>
+        <th>Status</th>
+        <th>View</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for b in summary %}
+      <tr class="{% if b[5] == 'expired' %}row-expired{% elif b[5] == 'expiring_soon' %}row-warning{% else %}row-active{% endif %}">
+        <td>{{ b[0] }}</td>
+        <td>{{ b[1] }}</td>
+        <td>{{ b[2] }}</td>
+        <td>{{ b[3] }}</td>
+        <td>{{ b[4] }}</td>
+        <td><span class="badge {{ b[5] }}">{{ b[5]|replace('_', ' ')|upper }}</span></td>
+        <td><a href="{{ url_for('bhakt_detail', bhakt_id=b[0]) }}">📄 Details</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

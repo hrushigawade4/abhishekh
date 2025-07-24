@@ -1,82 +1,341 @@
+/* Base Page Styling */
 body {
-  font-family: "Segoe UI", sans-serif;
-  background-color: #fff8e1;
+  background-color: #fff7e6;
+  font-family: 'Segoe UI', sans-serif;
   margin: 0;
-  padding: 20px;
-  color: #3e2723;
+  padding: 0;
+  text-align: center;
+  color: #3d2b1f;
+  background-image: url("/static/img/swami-bg-pattern.png");
+  background-repeat: repeat-y;
+  background-position: center top;
+  background-size: cover;
+  background-attachment: fixed;
+  line-height: 1.6;
 }
 
-.container {
-  max-width: 800px;
-  margin: auto;
-  background-color: #fffaf0;
-  border: 1px solid #ffd54f;
-  padding: 20px;
+/* Header Title */
+header h1 {
+  font-size: 2em;
+  margin: 1em 0 0.5em;
+  color: #3d2b1f;
+  text-shadow: 1px 1px 0 #fff3d1;
+}
+
+/* Shared Container Styling */
+.container,
+.dashboard-container,
+.login-container {
+  background-color: #fff6e0;
   border-radius: 12px;
-  box-shadow: 0 0 12px rgba(0,0,0,0.05);
+  padding: 2em;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 1;
+  transition: transform 0.2s ease;
+}
+.container:hover,
+.dashboard-container:hover,
+.login-container:hover {
+  transform: translateY(-2px);
 }
 
-h2, h3 {
-  color: #e65100;
-}
-
-label {
-  display: block;
-  margin-top: 10px;
-  font-weight: bold;
-}
-
-input, select, button {
-  display: block;
-  width: 100%;
-  margin-top: 5px;
-  margin-bottom: 15px;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-}
-
-button {
-  background-color: #ff6f00;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: #e65100;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-}
-
-th {
-  background-color: #ffe082;
-  color: #3e2723;
-}
-
-th, td {
-  padding: 10px;
+/* Container Sizes */
+.container, .dashboard-container {
+  width: 80%;
+  max-width: 1000px;
+  margin: 2em auto;
   text-align: left;
-  border: 1px solid #ffd54f;
+}
+.login-container {
+  width: 90%;
+  max-width: 400px;
+  margin: 4em auto;
 }
 
+/* Watermark on Containers */
+.container::before,
+.login-container::before {
+  content: "";
+  background: url("/static/img/swami-icon.png") no-repeat center center;
+  background-size: 50%;
+  opacity: 0.04;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Section Titles */
+.container h2,
+.dashboard-container h2,
+.login-container h2 {
+  color: #d35400;
+  margin-top: 0;
+  margin-bottom: 1em;
+  text-align: center;
+  font-size: 1.6rem;
+}
+
+/* Links */
 a {
+  color: #c0392b;
   text-decoration: none;
-  color: #d84315;
 }
-
 a:hover {
   text-decoration: underline;
 }
 
-.schedule-card {
-  margin-bottom: 20px;
-  padding: 10px;
-  background-color: #fffde7;
-  border: 1px solid #ffe082;
-  border-radius: 8px;
+/* Inputs and Selects */
+input[type="text"],
+input[type="password"],
+input[type="date"],
+select {
+  width: 100%;
+  max-width: 400px;
+  padding: 0.7em;
+  font-size: 1em;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  transition: border-color 0.3s, box-shadow 0.3s;
 }
+
+input:focus,
+select:focus {
+  border-color: #f97316;
+  box-shadow: 0 0 6px rgba(249, 115, 22, 0.4);
+  outline: none;
+}
+
+/* Buttons */
+button,
+form button,
+.search-form button {
+  background-color: #f97316;
+  color: white;
+  font-size: 1em;
+  border: none;
+  padding: 0.8em 1.5em;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 0.5em;
+  transition: background-color 0.3s ease, box-shadow 0.2s;
+}
+button:hover,
+form button:hover,
+.search-form button:hover {
+  background-color: #ea580c;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* Form Labels */
+label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 0.4em;
+  color: #3d2b1f;
+  text-align: left;
+}
+
+/* Dashboard Quick Links */
+.dashboard-links {
+  margin-bottom: 15px;
+  font-size: 1rem;
+}
+
+/* Tables */
+table,
+.bhakt-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1em;
+  font-size: 0.95rem;
+}
+thead {
+  background-color: #ffe59d;
+}
+th, td {
+  padding: 0.8em;
+  text-align: center;
+  border: 1px solid #e0e0e0;
+}
+
+/* Row Highlighting */
+.row-active {
+  background-color: #e6ffea;
+}
+.row-warning {
+  background-color: #fff3cd;
+}
+.row-expired {
+  background-color: #ffe6e6;
+}
+
+/* Status Badges */
+.badge {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  display: inline-block;
+  text-transform: uppercase;
+}
+.badge.active { background-color: #27ae60; color: white; }
+.badge.expired { background-color: #e74c3c; color: white; }
+.badge.expiring_soon { background-color: #f39c12; color: white; }
+
+/* Login Form Layout */
+.login-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
+
+/* Inline Code Box */
+.login-container code {
+  background-color: #f3eacb;
+  padding: 0.2em 0.4em;
+  border-radius: 4px;
+}
+
+/* Footer */
+footer {
+  margin-top: 4em;
+  font-style: italic;
+  color: #555;
+  text-align: center;
+  font-size: 0.95em;
+}
+
+/* Mobile Responsive */
+@media (max-width: 600px) {
+  .container, .dashboard-container, .login-container {
+    width: 95%;
+    padding: 1em;
+  }
+
+  .search-form input,
+  .search-form button {
+    width: 100%;
+    margin-bottom: 0.5em;
+  }
+
+  .dashboard-links a {
+    display: block;
+    margin: 0.3em 0;
+  }
+
+  .bhakt-table th, .bhakt-table td {
+    font-size: 0.85rem;
+    padding: 6px;
+  }
+
+  h2 {
+    font-size: 1.2rem;
+  }
+}
+
+/* ========================
+   Calendar Section Styling
+   ======================== */
+.calendar-section {
+  margin-bottom: 3em;
+  padding: 1.5em;
+  border-radius: 10px;
+  background-color: #fffdf4;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.calendar-section h3 {
+  color: #b45309;
+  border-bottom: 2px solid #fde68a;
+  padding-bottom: 0.3em;
+  margin-bottom: 1em;
+  font-size: 1.3rem;
+}
+
+/* Bhakt Card */
+.bhakt-entry {
+  margin-bottom: 2em;
+  padding: 1em;
+  border: 1px solid #f0e5cf;
+  border-radius: 8px;
+  background-color: #fff8e6;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+.bhakt-entry h4 {
+  margin-top: 0;
+  margin-bottom: 0.5em;
+  color: #92400e;
+  font-size: 1.1rem;
+}
+
+.bhakt-entry ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.bhakt-entry li {
+  margin-bottom: 0.4em;
+  font-size: 0.95rem;
+}
+
+/* Completed Label */
+.completed-label {
+  color: green;
+  font-weight: bold;
+}
+
+/* Mark Completed Button */
+form.calendar-form button {
+  font-size: 0.85rem;
+  padding: 0.4em 1em;
+  margin-left: 0.6em;
+}
+
+.date-upcoming {
+  color: #d97706; /* orange */
+  font-weight: bold;
+}
+
+.date-today {
+  color: #2563eb; /* blue */
+  font-weight: bold;
+}
+
+.date-past {
+  color: #9ca3af; /* gray */
+  text-decoration: line-through;
+}
+
+/* ========================
+   Calendar Date Card Block
+   ======================== */
+.calendar-card {
+  background-color: #fffdfa;
+  border: 1px solid #f5e9cc;
+  border-radius: 8px;
+  padding: 1em;
+  margin-bottom: 1em;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  transition: background-color 0.3s;
+}
+
+.calendar-card:hover {
+  background-color: #fff8ec;
+}
+
+.calendar-date-label {
+  font-size: 1rem;
+  font-weight: bold;
+}
+
