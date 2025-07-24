@@ -24,7 +24,15 @@
     {% if schedule %}
     <ul>
       {% for date in schedule %}
-      <li>{{ date }}</li>
+      <li>
+  📅 {{ date.date }} —
+  {% if date.completed %}
+    ✅ Completed
+  {% else %}
+    ⏳ Pending
+  {% endif %}
+</li>
+
       {% endfor %}
     </ul>
     {% else %}
