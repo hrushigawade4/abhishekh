@@ -1,11 +1,11 @@
-/* Base Page Styling */
+/* === BASE PAGE STYLING === */
 body {
   background-color: #fff7e6;
   font-family: 'Segoe UI', sans-serif;
   margin: 0;
   padding: 0;
-  text-align: center;
   color: #3d2b1f;
+  text-align: center;
   background-image: url("/static/img/swami-bg-pattern.png");
   background-repeat: repeat-y;
   background-position: center top;
@@ -14,7 +14,6 @@ body {
   line-height: 1.6;
 }
 
-/* Header Title */
 header h1 {
   font-size: 2em;
   margin: 1em 0 0.5em;
@@ -22,7 +21,7 @@ header h1 {
   text-shadow: 1px 1px 0 #fff3d1;
 }
 
-/* Shared Container Styling */
+/* === CONTAINERS === */
 .container,
 .dashboard-container,
 .login-container {
@@ -30,6 +29,10 @@ header h1 {
   border-radius: 12px;
   padding: 2em;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin: 2em auto;
+  max-width: 1000px;
+  width: 80%;
+  text-align: left;
   position: relative;
   z-index: 1;
   transition: transform 0.2s ease;
@@ -39,21 +42,13 @@ header h1 {
 .login-container:hover {
   transform: translateY(-2px);
 }
-
-/* Container Sizes */
-.container, .dashboard-container {
-  width: 80%;
-  max-width: 1000px;
-  margin: 2em auto;
-  text-align: left;
-}
 .login-container {
   width: 90%;
   max-width: 400px;
   margin: 4em auto;
 }
 
-/* Watermark on Containers */
+/* === WATERMARK === */
 .container::before,
 .login-container::before {
   content: "";
@@ -70,7 +65,7 @@ header h1 {
   pointer-events: none;
 }
 
-/* Section Titles */
+/* === SECTION TITLES === */
 .container h2,
 .dashboard-container h2,
 .login-container h2 {
@@ -81,7 +76,7 @@ header h1 {
   font-size: 1.6rem;
 }
 
-/* Links */
+/* === LINKS === */
 a {
   color: #c0392b;
   text-decoration: none;
@@ -90,7 +85,7 @@ a:hover {
   text-decoration: underline;
 }
 
-/* Inputs and Selects */
+/* === INPUTS & SELECTS === */
 input[type="text"],
 input[type="password"],
 input[type="date"],
@@ -103,7 +98,6 @@ select {
   border-radius: 6px;
   transition: border-color 0.3s, box-shadow 0.3s;
 }
-
 input:focus,
 select:focus {
   border-color: #f97316;
@@ -111,7 +105,7 @@ select:focus {
   outline: none;
 }
 
-/* Buttons */
+/* === BUTTONS === */
 button,
 form button,
 .search-form button {
@@ -131,8 +125,15 @@ form button:hover,
   background-color: #ea580c;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
+button.active-filter {
+  background-color: #ffeaa7;
+  border: 2px solid #fdcb6e;
+  font-weight: bold;
+  color: #2d3436;
+  box-shadow: 0 0 0 2px #fdcb6e inset;
+}
 
-/* Form Labels */
+/* === LABELS === */
 label {
   display: block;
   font-weight: bold;
@@ -141,13 +142,45 @@ label {
   text-align: left;
 }
 
-/* Dashboard Quick Links */
+/* === DASHBOARD TOP LINKS === */
 .dashboard-links {
-  margin-bottom: 15px;
+  margin-bottom: 1em;
   font-size: 1rem;
+  text-align: center;
+}
+.dashboard-links a {
+  margin: 0 10px;
+  font-weight: 500;
+  padding: 6px 10px;
+  border-radius: 6px;
+  background-color: #fdebd0;
+  display: inline-block;
+}
+.dashboard-links a:hover {
+  background-color: #fad7a0;
 }
 
-/* Tables */
+/* === FILTER BUTTON BAR (UNDER SEARCH) === */
+.filter-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 1em;
+}
+.filter-buttons button {
+  font-size: 0.9em;
+  padding: 0.5em 1.2em;
+  background-color: #ffe59d;
+  color: #3d2b1f;
+  border-radius: 6px;
+  border: 1px solid #f1c40f;
+}
+.filter-buttons button:hover {
+  background-color: #f9d976;
+}
+
+/* === TABLES === */
 table,
 .bhakt-table {
   width: 100%;
@@ -164,18 +197,12 @@ th, td {
   border: 1px solid #e0e0e0;
 }
 
-/* Row Highlighting */
-.row-active {
-  background-color: #e6ffea;
-}
-.row-warning {
-  background-color: #fff3cd;
-}
-.row-expired {
-  background-color: #ffe6e6;
-}
+/* === ROW COLORS === */
+.row-active { background-color: #e6ffea; }
+.row-warning { background-color: #fff3cd; }
+.row-expired { background-color: #ffe6e6; }
 
-/* Status Badges */
+/* === STATUS BADGES === */
 .badge {
   padding: 4px 10px;
   border-radius: 12px;
@@ -188,21 +215,75 @@ th, td {
 .badge.expired { background-color: #e74c3c; color: white; }
 .badge.expiring_soon { background-color: #f39c12; color: white; }
 
-/* Login Form Layout */
-.login-container form {
+/* === CALENDAR === */
+.calendar-section {
+  margin-bottom: 3em;
+  padding: 1.5em;
+  border-radius: 10px;
+  background-color: #fffdf4;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+.calendar-section h3 {
+  color: #b45309;
+  border-bottom: 2px solid #fde68a;
+  padding-bottom: 0.3em;
+  margin-bottom: 1em;
+  font-size: 1.3rem;
+}
+
+/* === CALENDAR CARD === */
+.calendar-card {
+  background-color: #fffdfa;
+  border: 1px solid #f5e9cc;
+  border-radius: 8px;
+  padding: 1em;
+  margin-bottom: 1em;
   display: flex;
-  flex-direction: column;
-  gap: 1em;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  transition: background-color 0.3s;
+}
+.calendar-card:hover {
+  background-color: #fff8ec;
+}
+.calendar-date-label {
+  font-size: 1rem;
+  font-weight: bold;
+}
+.date-upcoming { color: #d97706; font-weight: bold; }
+.date-today { color: #2563eb; font-weight: bold; }
+.date-past { color: #9ca3af; text-decoration: line-through; }
+
+/* === BHKT ENTRY CARD === */
+.bhakt-entry {
+  margin-bottom: 2em;
+  padding: 1em;
+  border: 1px solid #f0e5cf;
+  border-radius: 8px;
+  background-color: #fff8e6;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+.bhakt-entry h4 {
+  margin-top: 0;
+  margin-bottom: 0.5em;
+  color: #92400e;
+  font-size: 1.1rem;
+}
+.bhakt-entry ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+.bhakt-entry li {
+  margin-bottom: 0.4em;
+  font-size: 0.95rem;
+}
+.completed-label {
+  color: green;
+  font-weight: bold;
 }
 
-/* Inline Code Box */
-.login-container code {
-  background-color: #f3eacb;
-  padding: 0.2em 0.4em;
-  border-radius: 4px;
-}
-
-/* Footer */
+/* === FOOTER === */
 footer {
   margin-top: 4em;
   font-style: italic;
@@ -211,7 +292,7 @@ footer {
   font-size: 0.95em;
 }
 
-/* Mobile Responsive */
+/* === MOBILE RESPONSIVE === */
 @media (max-width: 600px) {
   .container, .dashboard-container, .login-container {
     width: 95%;
@@ -237,105 +318,138 @@ footer {
   h2 {
     font-size: 1.2rem;
   }
-}
 
-/* ========================
-   Calendar Section Styling
-   ======================== */
-.calendar-section {
-  margin-bottom: 3em;
-  padding: 1.5em;
-  border-radius: 10px;
-  background-color: #fffdf4;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  .filter-buttons {
+    flex-direction: column;
+  }
 }
-
-.calendar-section h3 {
-  color: #b45309;
-  border-bottom: 2px solid #fde68a;
-  padding-bottom: 0.3em;
-  margin-bottom: 1em;
-  font-size: 1.3rem;
-}
-
-/* Bhakt Card */
-.bhakt-entry {
-  margin-bottom: 2em;
-  padding: 1em;
-  border: 1px solid #f0e5cf;
-  border-radius: 8px;
-  background-color: #fff8e6;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
-}
-
-.bhakt-entry h4 {
-  margin-top: 0;
-  margin-bottom: 0.5em;
-  color: #92400e;
-  font-size: 1.1rem;
-}
-
-.bhakt-entry ul {
-  list-style-type: none;
-  padding-left: 0;
-}
-
-.bhakt-entry li {
-  margin-bottom: 0.4em;
-  font-size: 0.95rem;
-}
-
-/* Completed Label */
-.completed-label {
-  color: green;
-  font-weight: bold;
-}
-
-/* Mark Completed Button */
-form.calendar-form button {
-  font-size: 0.85rem;
-  padding: 0.4em 1em;
-  margin-left: 0.6em;
-}
-
-.date-upcoming {
-  color: #d97706; /* orange */
-  font-weight: bold;
-}
-
-.date-today {
-  color: #2563eb; /* blue */
-  font-weight: bold;
-}
-
-.date-past {
-  color: #9ca3af; /* gray */
-  text-decoration: line-through;
-}
-
-/* ========================
-   Calendar Date Card Block
-   ======================== */
-.calendar-card {
-  background-color: #fffdfa;
-  border: 1px solid #f5e9cc;
-  border-radius: 8px;
-  padding: 1em;
-  margin-bottom: 1em;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+/* === SEARCH SECTION CENTERED === */
+.search-section {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  flex-wrap: wrap;
-  transition: background-color 0.3s;
+  margin: 1.5em auto;
 }
 
-.calendar-card:hover {
-  background-color: #fff8ec;
+.search-form {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  background-color: #fff7e0;
+  padding: 0.5em 1em;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
-.calendar-date-label {
-  font-size: 1rem;
+.search-form input[type="text"] {
+  padding: 0.6em;
+  width: 280px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.search-form button {
+  padding: 0.6em 1.2em;
+  border-radius: 6px;
+  background-color: #f97316;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.search-form button:hover {
+  background-color: #ea580c;
+}
+
+
+.export-box button {
+  margin-top: 1em;
+  font-size: 1em;
+  padding: 0.8em 1.5em;
+  border-radius: 6px;
+  background-color: #f97316;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+.export-box button:hover {
+  background-color: #ea580c;
+}
+
+.swami-header {
+  background: #fff8e1;
+  padding: 1rem 0;
+  border-bottom: 2px solid #ff8800;
+  text-align: center;
+  font-family: 'Mukta', sans-serif;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.swami-banner {
+  font-size: 1.8rem;
   font-weight: bold;
+  color: #b33c00;
 }
 
+.sadguru {
+  color: #d97706;
+}
+
+.sadguru .guru {
+  color: #ef4444;
+  font-style: italic;
+}
+
+.spiritual-header {
+  background: linear-gradient(to right, #fff7e6, #ffe8cc);
+  padding: 1.2rem 0;
+  border-top: 3px solid #ffa500;
+  border-bottom: 2px dashed #ff9900;
+  text-align: center;
+  font-family: 'Noto Serif Devanagari', 'Mukta', sans-serif;
+  position: relative;
+  z-index: 10;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.mantra-glow {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #8b0000;
+  letter-spacing: 1px;
+  text-shadow: 0 0 4px #ffe8a1;
+}
+
+.sanskrit-word {
+  color: #d97706;
+  font-size: 2.2rem;
+  margin-right: 0.2rem;
+}
+
+.sanskrit-guru {
+  color: #e11d48;
+  font-size: 2.2rem;
+  font-style: italic;
+  margin-right: 0.5rem;
+}
+
+.rest-text {
+  color: #6b2400;
+}
+
+.center-note {
+  text-align: center;
+  font-style: italic;
+  font-size: 0.9rem;
+  color: #555;
+  margin-top: 1rem;
+  opacity: 0.85;
+}
+
+.date-hint {
+  font-size: 0.75rem;
+  color: #555;
+  font-weight: 500;
+  display: block;
+  margin-top: 0.2rem;
+}

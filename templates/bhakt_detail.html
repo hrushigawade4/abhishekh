@@ -1,18 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <title>Bhakt Details</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-
 <body>
   <div class="container">
     <h2>📄 Bhakt Details</h2>
 
     <p><strong>Name:</strong> {{ bhakt[1] }}</p>
     <p><strong>Gotra:</strong> {{ bhakt[2] }}</p>
+    <p><strong>Mobile No:</strong> {{ bhakt[7] }}</p>
+    <p><strong>Address:</strong> {{ bhakt[8] }}</p>
+    {% if bhakt[9] %}
+      <p><strong>Email:</strong> {{ bhakt[9] }}</p>
+    {% endif %}
     <p><strong>Abhishek Type:</strong> {{ bhakt[3] }}</p>
     <p><strong>Duration:</strong> {{ bhakt[4] }} months</p>
     <p><strong>Start Date:</strong> {{ bhakt[5] }}</p>
@@ -20,29 +23,25 @@
     <p><strong>✅ Completed Abhisheks:</strong> {{ completed }}</p>
     <p><strong>⏳ Remaining Abhisheks:</strong> {{ remaining }}</p>
 
-    <h3>🗓️ Abhishek Schedule</h3>
+    <h3>🗓️ Abhishek Schedule (Based on Sacred Dates)</h3>
     {% if schedule %}
-    <ul>
-      {% for date in schedule %}
-      <li>
-  📅 {{ date.date }} —
-  {% if date.completed %}
-    ✅ Completed
-  {% else %}
-    ⏳ Pending
-  {% endif %}
-</li>
-
-      {% endfor %}
-    </ul>
+      <ul>
+        {% for date in schedule %}
+          <li>
+            📅 {{ date.date }} —
+            {% if date.completed %}
+              ✅ Completed
+            {% else %}
+              ⏳ Pending
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
     {% else %}
-    <p>No abhishek dates found for this bhakt.</p>
+      <p>No abhishek dates found for this bhakt.</p>
     {% endif %}
-
-
 
     <p><a href="{{ url_for('dashboard') }}">← Back to Dashboard</a></p>
   </div>
 </body>
-
 </html>

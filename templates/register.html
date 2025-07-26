@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Register Bhakt | Abhishek Manager</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
+
 <body>
 
   <!-- 🔱 Header -->
@@ -17,9 +19,25 @@
     <h2>📝 <span>Bhakt Registration</span></h2>
 
     <form method="POST">
+
       <div class="form-group">
         <label for="name">Full Name:</label>
         <input type="text" name="name" id="name" required>
+      </div>
+
+      <div class="form-group">
+        <label for="mobile">Mobile No:</label>
+        <input type="text" name="mobile" id="mobile" required>
+      </div>
+
+      <div class="form-group">
+        <label for="address">Address:</label>
+        <input type="text" name="address" id="address" required>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email (optional):</label>
+        <input type="email" name="email" id="email">
       </div>
 
       <div class="form-group">
@@ -27,31 +45,53 @@
         <input type="text" name="gotra" id="gotra" required>
       </div>
 
-      <div class="form-group">
-        <label for="type">Abhishek Type:</label>
-        <select name="type" id="type" required>
-          <option value="">Select</option>
-          <option value="Purnima">Purnima</option>
-          <option value="Amavasya">Amavasya</option>
-        </select>
-      </div>
+  
 
-      <div class="form-group">
-        <label for="duration">Duration:</label>
-        <select name="duration" id="duration" required>
-          <option value="">Select</option>
-          <option value="6">6 Months</option>
-          <option value="12">12 Months</option>
-        </select>
-      </div>
+    
 
-      <div class="form-group">
-        <label for="start_date">Start Date:</label>
-        <input type="date" name="start_date" id="start_date" required>
-      </div>
+  <div class="form-group">
+    <label for="type">Abhishek Type:</label>
+    <select name="type" id="type" required>
+      <option value="">Select</option>
+      {% for t in abhishek_types %}
+        <option value="{{ t }}">{{ t }}</option>
+      {% endfor %}
+    </select>
+  </div>
 
-      <button type="submit">Register Bhakt</button>
-    </form>
+  <div class="form-group">
+    <label for="duration_mode">Duration:</label>
+    <select id="duration_mode" name="duration_mode" onchange="toggleCustomDuration()" required>
+      <option value="1">1 Month</option>
+      <option value="3">3 Months</option>
+      <option value="6">6 Months</option>
+      <option value="12">12 Months</option>
+      <option value="custom">Custom</option>
+    </select>
+  </div>
+
+  <div class="form-group" id="custom-duration-box" style="display: none;">
+    <label for="custom_duration_value">Custom Duration:</label>
+    <div style="display: flex; gap: 10px;">
+      <input type="number" id="custom_duration_value" name="custom_duration_value" min="1" placeholder="Enter number" style="flex: 1;">
+      <select id="custom_duration_unit" name="custom_duration_unit" style="flex: 1;">
+        <option value="months">Months</option>
+        <option value="years">Years</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Final duration field (hidden) -->
+  <input type="hidden" name="duration" id="final_duration">
+
+  <div class="form-group">
+    <label for="start_date">Start Date:</label>
+    <input type="date" name="start_date" id="start_date" required>
+  </div>
+
+  <button type="submit">Register Bhakt</button>
+</form>
+
 
     <a href="{{ url_for('dashboard') }}" class="back-link">← Back to Dashboard</a>
   </div>
@@ -60,5 +100,41 @@
   <footer class="main-footer">
     <p><em>"सद्गुरु श्री स्वामी समर्थ महाराज की जय"</em></p>
   </footer>
+  <script>
+  function toggleCustomDuration() {
+    const mode = document.getElementById("duration_mode").value;
+    const customBox = document.getElementById("custom-duration-box");
+    const customValue = document.getElementById("custom_duration_value");
+    const customUnit = document.getElementById("custom_duration_unit");
+
+    const show = (mode === "custom");
+    customBox.style.display = show ? "block" : "none";
+
+    // Set 'required' only when custom is selected
+    customValue.required = show;
+    customUnit.required = show;
+  }
+
+  document.querySelector("form").addEventListener("submit", function (e) {
+    const mode = document.getElementById("duration_mode").value;
+    const finalInput = document.getElementById("final_duration");
+
+    if (mode === "custom") {
+      const value = parseInt(document.getElementById("custom_duration_value").value);
+      const unit = document.getElementById("custom_duration_unit").value;
+      if (!value || value <= 0) {
+        alert("Please enter a valid custom duration.");
+        e.preventDefault();
+        return;
+      }
+      finalInput.value = (unit === "years") ? value * 12 : value;
+    } else {
+      finalInput.value = mode;
+    }
+  });
+</script>
+
+
 </body>
+
 </html>

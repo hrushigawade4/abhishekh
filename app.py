@@ -69,31 +69,9 @@ def seed_admin():
         conn.commit()
     conn.close()
 
-def load_sacred_dates():
-    with open(SACRED_DATES_FILE, 'r') as f:
-        return json.load(f)
 ABHISHEK_TYPES_FILE = 'abhishek_types.json'
 
-def load_abhishek_types():
-    if not os.path.exists(ABHISHEK_TYPES_FILE):
-        return []
-    with open(ABHISHEK_TYPES_FILE, 'r') as f:
-        return json.load(f)
 
-def save_abhishek_type(new_type):
-    types = load_abhishek_types()
-    if new_type not in types:
-        types.append(new_type)
-        with open(ABHISHEK_TYPES_FILE, 'w') as f:
-            json.dump(types, f, indent=2)
-
-
-def calculate_abhishek_dates(abhishek_type, start_date, duration_months):
-    sacred_dates = load_sacred_dates().get(abhishek_type, [])
-    start = datetime.strptime(start_date, "%Y-%m-%d")
-    end = start + timedelta(days=30 * duration_months)
-    result = [d for d in sacred_dates if start <= datetime.strptime(d, "%Y-%m-%d") <= end]
-    return result
 
 @app.route('/')
 def home():
@@ -131,10 +109,19 @@ def register():
 
     if request.method == 'POST':
         name = request.form['name']
+        mobile = request.form['mobile']
+        address = request.form['address']
+        email = request.form['email']
         gotra = request.form['gotra']
         abhishek_type = request.form['type']
         duration = int(request.form['duration'])
         start = request.form['start_date']
+
+        # ✅ Validate date
+        if not validate_date(start):
+            flash("❌ Invalid start date. Please use YYYY-MM-DD format.")
+            return redirect(url_for('register'))
+
         start_dt = datetime.strptime(start, "%Y-%m-%d")
         end_dt = start_dt + timedelta(days=30 * duration)
         end = end_dt.strftime("%Y-%m-%d")
@@ -142,41 +129,168 @@ def register():
         conn = sqlite3.connect(DB_PATH)
         c = conn.cursor()
         c.execute("""
-            INSERT INTO bhakts (name, gotra, abhishek_type, duration_months, start_date, end_date)
-            VALUES (?, ?, ?, ?, ?, ?)
-        """, (name, gotra, abhishek_type, duration, start, end))
+            INSERT INTO bhakts 
+            (name, mobile, address, email, gotra, abhishek_type, duration_months, start_date, end_date)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (name, mobile, address, email, gotra, abhishek_type, duration, start, end))
         conn.commit()
         conn.close()
 
+        flash("✅ Bhakt registered successfully.")
         return redirect(url_for('dashboard'))
 
     # Load available abhishek types from sacred_dates.json
-    abhishek_data = load_sacred_dates()  # assumes it's a dict like {"Purnima": [...], "Guruwar": [...]}
+    abhishek_data = load_sacred_dates()
     abhishek_types = sorted(abhishek_data.keys())
     return render_template('register.html', abhishek_types=abhishek_types)
 
 
-@app.route('/dashboard')
+def validate_date(date_str):
+    try:
+        datetime.strptime(date_str, "%Y-%m-%d")
+        return True
+    except:
+        return False
+
+
+def safe_parse_date(date_str):
+    try:
+        return datetime.strptime(date_str, "%Y-%m-%d").date()
+    except Exception:
+        return None
+
+
+ # install via pip if not present
+
+@app.route("/dashboard")
 def dashboard():
-    if not is_logged_in():
-        return redirect(url_for('login'))
+    today = datetime.today()
 
-    conn = sqlite3.connect('bhakts.db')
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM bhakts")
-    bhakts = cursor.fetchall()
-    conn.close()
+    # Load sacred_dates.json
+    with open("sacred_dates.json", "r", encoding="utf-8") as f:
+        sacred_data = json.load(f)
 
-    today = datetime.today().date()
+    conn = sqlite3.connect("bhakts.db")
+    c = conn.cursor()
+
+    c.execute("SELECT id, name, abhishek_type, start_date, duration_months FROM bhakts")
+    bhakts = c.fetchall()
 
     summary = []
-    for row in bhakts:
-        end_date = datetime.strptime(row[6], "%Y-%m-%d").date()
-        status = "active" if end_date >= today else "expired"
-        next_dates = calculate_abhishek_dates(row[3], row[5], row[4])
-        summary.append((row[0], row[1], row[3], row[5], next_dates[0] if next_dates else "-", status))
+    next_month_abhisheks = []
+    total = len(bhakts)
 
-    return render_template('dashboard.html', summary=summary, total=len(bhakts))
+    for b in bhakts:
+        bhakt_id, name, abhishek_type, start_date, duration = b
+        start_stripped = start_date or "-"
+        start_hint = ""
+        next_hint = ""
+
+        # Safe date parsing
+        try:
+            start = datetime.strptime(start_date, "%Y-%m-%d")
+        except:
+            start = today  # fallback if malformed
+
+        # Calculate end date
+        try:
+            duration = int(duration)
+            end = start + timedelta(days=30 * duration)
+        except:
+            end = start + timedelta(days=365)  # fallback duration
+
+        # Default status
+        status = "active" if today <= end else "expired"
+
+        # Next Abhishek
+        next_abhishek = "Not Scheduled"
+        if abhishek_type in sacred_data:
+            for date_str in sacred_data[abhishek_type]:
+                try:
+                    dt = datetime.strptime(date_str, "%Y-%m-%d")
+                    if start <= dt <= end:
+                        next_abhishek = dt.strftime("%Y-%m-%d")
+                        next_hint = dt.strftime("%A, %d %b %Y")
+                        break
+                except:
+                    continue
+
+        # Hint format
+        start_hint = start.strftime("%A, %d %b %Y") if start else ""
+
+        summary.append([
+            bhakt_id,
+            name,
+            abhishek_type,
+            start_date,
+            next_abhishek,
+            status,
+            next_hint,
+            start_hint
+        ])
+
+        # Check if next_abhishek is in next month
+        if next_abhishek and next_abhishek != "Not Scheduled":
+            try:
+                dt = datetime.strptime(next_abhishek, "%Y-%m-%d")
+                if dt.month == (today.month % 12 + 1) and dt.year == (today.year if today.month < 12 else today.year + 1):
+                    next_month_abhisheks.append([
+                        bhakt_id,
+                        name,
+                        abhishek_type,
+                        start_date,
+                        next_abhishek
+                    ])
+            except:
+                pass
+
+    conn.close()
+
+    return render_template("dashboard.html",
+                           summary=summary,
+                           total=total,
+                           next_month_abhisheks=next_month_abhisheks)
+
+
+
+
+
+def safe_parse_date(date_str):
+    try:
+        return datetime.strptime(date_str, "%Y-%m-%d").date()
+    except:
+        return None
+
+def validate_date(date_str):
+    try:
+        datetime.strptime(date_str, "%Y-%m-%d")
+        return True
+    except:
+        return False
+
+
+
+
+
+def add_sacred_date(abhishek_type, new_date):
+    abhishek_type = abhishek_type.strip()
+    new_date = new_date.strip()
+
+    with open('sacred_dates.json', 'r') as f:
+        data = json.load(f)
+
+    # ✅ Append date only if it’s not already present
+    if abhishek_type in data:
+        if new_date and new_date not in data[abhishek_type]:
+            data[abhishek_type].append(new_date)
+    else:
+        # ✅ If new type not in JSON, create it
+        data[abhishek_type] = [new_date]
+
+    with open('sacred_dates.json', 'w') as f:
+        json.dump(data, f, indent=2)
+
+
 
 @app.route('/search')
 def search():
@@ -190,37 +304,38 @@ def search():
 
 @app.route('/bhakt/<int:bhakt_id>')
 def bhakt_detail(bhakt_id):
-    conn = sqlite3.connect(DB_PATH)
-    c = conn.cursor()
-    c.execute("SELECT * FROM bhakts WHERE id = ?", (bhakt_id,))
-    b = c.fetchone()
-    conn.close()
+    # Safely open the DB connection
+    with sqlite3.connect(DB_PATH) as conn:
+        c = conn.cursor()
+        c.execute("SELECT * FROM bhakts WHERE id = ?", (bhakt_id,))
+        b = c.fetchone()
 
     if not b:
-        return "Bhakt not found", 404
+        return "भक्त सापडला नाही." , 404  # Marathi fallback or message
 
-    with open(SACRED_JSON_PATH, 'r') as f:
+    # Load sacred dates JSON
+    with open(SACRED_JSON_PATH, 'r', encoding='utf-8') as f:
         sacred_data = json.load(f)
 
-    # Extract info
-    name = b[1]
-    gotra = b[2]
-    abhishek_type = b[3]
-    duration = b[4]
-    start_date = b[5]
-    end_date = b[6]
+    # Extract bhakt fields
+    name, gotra, abhishek_type = b[1], b[2], b[3]
+    duration, start_date, end_date = b[4], b[5], b[6]
 
-
-    # Enriched dates
+    # Get enriched abhishek schedule
     schedule = get_enriched_dates(abhishek_type, duration, start_date, bhakt_id, sacred_data)
-    completed = sum(1 for d in schedule if d["completed"])
+
+    # Completion counts
+    completed = sum(1 for d in schedule if d.get("completed"))
     remaining = len(schedule) - completed
 
-    return render_template('bhakt_detail.html',
-                           bhakt=b,
-                           schedule=schedule,
-                           completed=completed,
-                           remaining=remaining)
+    return render_template(
+        'bhakt_detail.html',
+        bhakt=b,
+        schedule=schedule,
+        completed=completed,
+        remaining=remaining
+    )
+
 
 
 
@@ -305,37 +420,85 @@ def export_csv():
     import os
     import tempfile
 
+    bhakt_type = request.args.get('type', 'all')
+
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     c.execute("SELECT * FROM bhakts")
     rows = c.fetchall()
+    conn.close()
 
     with open(SACRED_JSON_PATH, 'r') as f:
         sacred_data = json.load(f)
 
-    # Create a temporary CSV file
-    export_path = os.path.join("backup", "bhakts_export.csv")
+    today = datetime.today().date()
+    first_day_next_month = today.replace(day=1) + relativedelta(months=1)
+    last_day_next_month = first_day_next_month + relativedelta(months=1) - timedelta(days=1)
+
+    filtered_rows = []
+
+    for r in rows:
+        try:
+            bhakt_id = r[0]
+            name, gotra, abhishek_type, duration, start_date_raw, end_date_raw = r[1:7]
+
+            # 🔧 Ensure string for date parsing
+            start_date_str = str(start_date_raw)
+            end_date_str = str(end_date_raw)
+
+            start_date = datetime.strptime(start_date_str, "%Y-%m-%d").date()
+            end_date = datetime.strptime(end_date_str, "%Y-%m-%d").date()
+        except Exception:
+            continue  # Skip malformed row
+
+        status = "active" if end_date >= today else "expired"
+
+        try:
+            next_dates = calculate_abhishek_dates(abhishek_type, duration, start_date_str)
+            next_abhishek = next_dates[0] if next_dates else None
+        except Exception:
+            next_abhishek = None
+
+        if bhakt_type == 'active' and status != 'active':
+            continue
+        if bhakt_type == 'expired' and status != 'expired':
+            continue
+        if bhakt_type == 'next_month':
+            if not next_abhishek or not (first_day_next_month <= next_abhishek.date() <= last_day_next_month):
+                continue
+
+        filtered_rows.append((r, next_abhishek))
+
+    # 🔧 Prepare CSV
     os.makedirs("backup", exist_ok=True)
+    export_path = os.path.join("backup", f"bhakts_export_{bhakt_type}.csv")
 
     with open(export_path, 'w', newline='') as f:
         writer = csv.writer(f)
-        writer.writerow(['Name', 'Gotra', 'Type', 'Duration', 'Start Date', 'End Date', 'Completed', 'Remaining'])
+        writer.writerow(['Name', 'Gotra', 'Type', 'Duration', 'Start Date', 'End Date', 'Next Abhishek', 'Completed', 'Remaining'])
 
-        for r in rows:
+        for r, next_abhishek in filtered_rows:
             bhakt_id = r[0]
-            try:
-                name, gotra, abhishek_type, duration, start_date, end_date = r[1:7]
-            except ValueError:
-                continue  # skip malformed row
+            name, gotra, abhishek_type, duration, start_date, end_date = r[1:7]
 
-            enriched_dates = get_enriched_dates(abhishek_type, duration, start_date, bhakt_id, sacred_data)
+            # 🔧 Defensive date strings
+            start_date_str = str(start_date)
+            end_date_str = str(end_date)
+
+            enriched_dates = get_enriched_dates(abhishek_type, duration, start_date_str, bhakt_id, sacred_data)
             completed = sum(1 for d in enriched_dates if d["completed"])
             remaining = len(enriched_dates) - completed
 
-            writer.writerow([name, gotra, abhishek_type, duration, start_date, end_date, completed, remaining])
+            writer.writerow([
+                name, gotra, abhishek_type, duration,
+                start_date_str, end_date_str,
+                next_abhishek.strftime("%Y-%m-%d") if next_abhishek else "-",
+                completed, remaining
+            ])
 
-    # Only send after file is fully written and closed
     return send_file(export_path, as_attachment=True)
+
+
 
 
 def get_enriched_dates(abhishek_type, duration, start_date_str, bhakt_id, sacred_data):
@@ -437,6 +600,7 @@ def mark_completed():
         conn.commit()
         conn.close()
         return redirect(url_for('calendar'))
+
 def get_today_tomorrow_reminders():
     today = datetime.today().date()
     tomorrow = today + timedelta(days=1)
@@ -458,44 +622,26 @@ def get_today_tomorrow_reminders():
 
 @app.route('/sacred_dates', methods=['GET', 'POST'])
 def sacred_dates():
-    if not is_logged_in():
-        return redirect(url_for('login'))
-
-    data = load_sacred_dates()
-    abhishek_types = load_abhishek_types()
-
     if request.method == 'POST':
-        # Get selected OR newly entered type
-        abhishek_type = request.form.get('abhishek_type', '').strip()
-        new_type_input = request.form.get('new_abhishek_type', '').strip()
+        selected_type = request.form.get("abhishek_type", "").strip()
+        new_type_input = request.form.get("new_abhishek_type", "").strip()
+        new_date = request.form.get("new_date", "").strip()
 
         if new_type_input:
-            abhishek_type = new_type_input  # override selected with new
             save_abhishek_type(new_type_input)
+            selected_type = new_type_input
 
-        new_date = request.form['new_date'].strip()
+        if selected_type and new_date:
+            add_sacred_date(selected_type, new_date)
+            flash(f"✅ {selected_type} - {new_date} added as sacred date.")
 
-        # Validate date format
-        try:
-            datetime.strptime(new_date, "%Y-%m-%d")
-        except ValueError:
-            flash("Invalid date format. Use YYYY-MM-DD.")
-            return redirect(url_for('sacred_dates'))
+    # Load types and dates
+    abhishek_types = list(load_abhishek_types().keys())
+    with open('sacred_dates.json', 'r') as f:
+        sacred = json.load(f)
 
-        if abhishek_type in data:
-            if new_date not in data[abhishek_type]:
-                data[abhishek_type].append(new_date)
-        else:
-            data[abhishek_type] = [new_date]
+    return render_template('sacred_dates.html', abhishek_types=abhishek_types, sacred_dates=sacred)
 
-        # Save updated sacred dates
-        with open(SACRED_DATES_FILE, 'w') as f:
-            json.dump(data, f, indent=2)
-
-        flash("Date added successfully.")
-        return redirect(url_for('sacred_dates'))
-
-    return render_template('sacred_dates.html', sacred_dates=data, abhishek_types=abhishek_types)
 
 @app.template_filter('todatetime')
 def to_datetime_filter(value, fmt='%Y-%m-%d'):
@@ -510,6 +656,86 @@ def to_datetime_filter(value, fmt='%Y-%m-%d'):
     if isinstance(value, datetime):
         return value  # already datetime
     return datetime.strptime(value, fmt)
+
+def load_sacred_dates():
+    with open(ABHISHEK_TYPES_FILE, 'r') as f:
+        return json.load(f)
+
+
+def load_abhishek_types():
+    with open(ABHISHEK_TYPES_FILE, 'r') as f:
+        return json.load(f)  # ✅ Returns list
+
+
+def save_abhishek_type(new_type):
+    new_type = new_type.strip()
+
+    # Load list of types
+    with open(ABHISHEK_TYPES_FILE, 'r') as f:
+        types = json.load(f)
+
+    if new_type and new_type not in types:
+        types.append(new_type)
+
+        # Save updated types list
+        with open(ABHISHEK_TYPES_FILE, 'w') as f:
+            json.dump(types, f, indent=2)
+
+        # Also update sacred_dates.json dict with new empty entry
+        with open(SACRED_DATES_FILE, 'r') as f:
+            dates = json.load(f)
+
+        if new_type not in dates:
+            dates[new_type] = []
+
+        with open(SACRED_DATES_FILE, 'w') as f:
+            json.dump(dates, f, indent=2)
+
+
+
+
+
+
+
+def calculate_abhishek_dates(abhishek_type, start_date_str, duration_months):
+    try:
+        start_date = datetime.strptime(start_date_str, "%Y-%m-%d").date()
+    except (ValueError, TypeError):
+        return []
+
+    try:
+        duration_months = int(duration_months)
+    except (ValueError, TypeError):
+        return []
+
+    try:
+        end_date = start_date + relativedelta(months=duration_months)
+    except Exception:
+        return []
+
+    # Load sacred dates from JSON
+    try:
+        with open("sacred_dates.json", "r", encoding="utf-8") as f:
+            sacred_data = json.load(f)
+    except Exception:
+        return []
+
+    if abhishek_type not in sacred_data:
+        return []
+
+    upcoming_dates = []
+
+    for date_str in sacred_data[abhishek_type]:
+        try:
+            sacred_date = datetime.strptime(date_str, "%Y-%m-%d").date()
+            if start_date <= sacred_date <= end_date:
+                upcoming_dates.append(sacred_date.strftime("%Y-%m-%d"))
+        except Exception:
+            continue
+
+    upcoming_dates.sort()  # sort ascending
+    return upcoming_dates
+
 
 
 if __name__ == "__main__":

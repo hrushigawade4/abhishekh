@@ -6,9 +6,14 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-  <header>
-    <h1>Shree Swami Samarth Seva Portal – अभिषेक सेवा प्रणाली</h1>
-  </header>
+<header class="spiritual-header">
+  <div class="mantra-glow">
+    <!-- <span class="sanskrit-word">सद्</span>
+    <span class="sanskrit-guru">गुरु</span> -->
+   <span class="rest-text">॥ श्री स्वामी समर्थ महाराज की जय ॥</span>
+  </div>
+</header>
+
 
   <main class="container">
     {% block content %}{% endblock %}
@@ -16,6 +21,7 @@
 
   <footer>
     <p>“सद्गुरु श्री स्वामी समर्थ महाराज की जय”</p>
+    <p>“Shree Swami Samarth Seva Portal”</p>
   </footer>
 </body>
 </html>
